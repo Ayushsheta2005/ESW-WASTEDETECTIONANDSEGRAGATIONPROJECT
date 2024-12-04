@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L-Systems - Noise</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            height: 100vh;
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+        }
+        .title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        canvas {
+            border: 3px solid #444;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .can {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">L-System Noise"</div>
+        <canvas class="can" id="canvas" width="1000" height="800"></canvas>
+    </div>
+    <script src="lindenmayer.browser.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var canvas = document.getElementById('canvas');
+            var ctx = canvas.getContext("2d");
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 0.5;
+            ctx.translate(canvas.width / 2-100, canvas.height / 2 + 250); // Adjust starting point
+
+            var lsystem = new LSystem({
+                axiom: 'F+F',
+                angle: 90,
+                allowClassicSyntax: true,
+                productions: {
+                    'F': 'F-F++F-F',
+                    'F⟨F⟩-F': 'F-+F+F',  // content without context is noise
+                },
+                finals: {
+                    '+': () => {
+                        ctx.rotate((Math.PI / 180) * 90); // Rotate by 90 degrees
+                    },
+                    '-': () => {
+                        ctx.rotate((Math.PI / 180) * -90); // Rotate by -90 degrees
+                    },
+                    'F': () => {
+                        ctx.beginPath();
+                        ctx.moveTo(0, 0);
+                        ctx.lineTo(0, -6); // Drawing line
+                        ctx.stroke();
+                        ctx.translate(0, -6); // Move forward
+                    },
+                    '[': () => {
+                        ctx.save(); // Save the state
+                    },
+                    ']': () => {
+                        ctx.restore(); // Restore the state
+                    }
+                    
+                }
+            });
+
+            lsystem.iterate(6); // Perform 6 iterations (adjust if needed)
+            lsystem.final(ctx); // Draw the result on the canvas
+        });
+    </script>
+</body>
+</html>

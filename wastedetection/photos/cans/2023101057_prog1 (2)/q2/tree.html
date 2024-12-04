@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L-Systems</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+        }
+        .title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        canvas {
+            border: 3px solid #444;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .can {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">L SYSTEM TREE FROM ROLL NO </div>
+        <canvas class="can" id="canvas" width="1300" height="1000"></canvas>
+    </div>
+    <script src="lindenmayer.browser.js"></script>
+    <script src="tree.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var canvas = document.getElementById('canvas');
+            var ctx = canvas.getContext("2d");
+            var r=2023101057;
+            var angle = (r % 30) - 15 + 10 * Math.pow(-1, 15-(r % 30));
+            console.log(angle);
+            ctx.translate(canvas.width / 2, canvas.height / 2+200);
+            var lsystem = new LSystem(
+            {
+                axiom: 'X', 
+                productions: 
+                { 
+                    'X': 'F[-X]X[+X][+X]F-[-X]+X[-X]', 
+                    'F': 'FF', 
+                },
+                finals: {
+                    '+': () => { 
+                        ctx.rotate((Math.PI / 180) * angle); 
+                    },
+                    '-': () => { 
+                        ctx.rotate((Math.PI / 180) * -angle); 
+                    },
+                    'F': () => {
+                        ctx.beginPath();
+                        ctx.moveTo(0, 0);
+                        ctx.lineTo(0, -25 / (lsystem.iterations + 1)); 
+                        ctx.stroke();
+                        ctx.translate(0, -25 / (lsystem.iterations + 1));
+                    },
+                    '[': () => {
+                        ctx.save(); 
+                    },
+                    ']': () => {
+                        ctx.restore(); 
+                    }
+                }
+            });
+
+            lsystem.iterate(4); 
+            lsystem.final(ctx); 
+        });
+    </script>
+</body>
+</html>

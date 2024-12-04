@@ -1,0 +1,33 @@
+{
+    "axiom": "F",
+    "productions": {
+        "F": "XG[+F]XF[-F]XGF",
+        "X": "XG"
+    },
+    "finals": {
+        "+": "context.rotate((Math.PI/180) * 45)",
+        "-": "context.rotate((Math.PI/180) * -45)",
+        "F": [
+            "context.beginPath()",
+            "context.moveTo(0, 0)",
+            "context.lineTo(0, 60)",
+            "context.stroke()",
+            "context.translate(0, 60)"
+        ],
+        "G": [
+            "context.beginPath()",
+            "context.moveTo(0, 0)",
+            "context.lineTo(0, 60)",
+            "context.stroke()",
+            "context.translate(0, 60)"
+        ],
+        "[": "stack.push([context.x, context.y, currentAngle])",
+        "]": [
+            "[context.x, context.y, currentAngle] = stack.pop()",
+            "context.moveTo(context.x, context.y)"
+        ]
+    },
+    "iterations": 2,
+    "angle": 45,
+    "length": 60
+}

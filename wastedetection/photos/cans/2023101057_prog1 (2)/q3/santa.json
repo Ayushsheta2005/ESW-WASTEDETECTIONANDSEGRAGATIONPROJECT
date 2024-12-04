@@ -1,0 +1,23 @@
+{
+    "axiom": "F",
+    "productions": {
+        "F": "F-F++F-F"
+    },
+    "finals": {
+        "+": "context.rotate((Math.PI/180) * 75)",
+        "-": "context.rotate((Math.PI/180) * -75)",
+        "F": 
+        [
+            "context.beginPath()",
+            "ctx.rotate((Math.PI / 180) * 75)",
+            "context.moveTo(0, 0)",
+            "context.lineTo(0, 15)",
+            "context.stroke()",
+            "context.translate(0, 15)",
+            "ctx.rotate((Math.PI / 180) * -75)"
+        ]
+    },
+    "iterations": 4,
+    "angle": 75
+}
+

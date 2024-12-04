@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L-Systems</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            height: 100vh;
+            background-color: #f0f0f0;
+            /* Light background color for contrast */
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .title {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        canvas {
+            border: 2px solid #333;
+            /* Darker border color */
+            background-color: #fff;
+            /* White background for canvas */
+        }
+
+        .can {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="title">L-System RANDOM TREE Generator </div>
+        <canvas class="can" id="canvas" width="1500" height="1200"></canvas> 
+    </div>
+    <script src="lindenmayer.browser.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var canvas = document.getElementById('canvas');
+            var ctx = canvas.getContext("2d");
+            ctx.translate(canvas.width / 2, canvas.height / 2 + 400);
+            var lsystem = new LSystem({
+                axiom: 'X',
+                productions: {
+                    'X': () => {
+                        let rules = [
+                            'F-[[-X]+X]+F[+FX]-X',
+                            'F+[[+X]-X]-F[-FX]+X[X]'
+                        ];
+                        return rules[Math.floor(Math.random() * rules.length)];
+                    },
+                    'F': () => {
+                        let rules = [
+                            'F[F]F',
+                            'F[+]F',
+                            'F[FF]F'
+                        ];
+                        return rules[Math.floor(Math.random() * rules.length)];
+                    },
+                },
+                finals: {
+                    '+': () => {
+                        ctx.rotate((Math.PI / 180) * 12.5);
+                    },
+                    '-': () => {
+                        ctx.rotate((Math.PI / 180) * -12.5);
+                    },
+                    'F': () => {
+                        ctx.beginPath();
+                        ctx.moveTo(0, 0);
+                        ctx.lineTo(0, -25 / (lsystem.iterations + 1));
+                        ctx.stroke();
+                        ctx.translate(0, -25 / (lsystem.iterations + 1));
+                    },
+                    '[': () => {
+                        ctx.save();
+                    },
+                    ']': () => {
+                        ctx.restore();
+                    }
+                }
+            });
+
+            lsystem.iterate(6);
+            lsystem.final(ctx);
+        });
+    </script>
+</body>
+
+</html>
